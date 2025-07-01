@@ -1,23 +1,22 @@
-import express from 'express';
 import dotenv from 'dotenv';
+import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet'; 
 import morgan from 'morgan';
+import helmet from 'helmet'; 
+import productRoutes from './routes/productRoutes.js';
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config(); // Load environment variables from .env file FIRST!
+const PORT = process.env.PORT || 3000; // Now gets 5000 from .env
+
 const app = express();
-const PORT = process.env.PORT || 3000; // Default to 3000 if PORT is not set
-
+// Middleware setup
 app.use(express.json()); // Parse JSON bodies
-app.use(cors()); // Enable CORS if needed
+app.use(cors()); // Allows frontend (React on port 3000) to talk to backend (Express on port 5000)
+app.use(morgan('dev')); // HTTP Request Logger
 app.use(helmet()); // Security middleware
-app.use(morgan('dev')); // Logging middleware
 
-app.get('/test', (req, res) => {
-  console.log(res.getHeaders());
-  res.send('Hello, from backend test route!');
-});
+app.use('/api/products', productRoutes); // Use product routes
 
 app.listen(PORT, () => {
-  console.log('Server is running on PORT' + PORT);
+  console.log('Server is running on PORT ' + PORT);
 });
