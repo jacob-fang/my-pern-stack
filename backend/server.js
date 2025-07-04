@@ -1,22 +1,43 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import morgan from 'morgan';
 import helmet from 'helmet'; 
+import morgan from 'morgan';
+
 import productRoutes from './routes/productRoutes.js';
+import { sql } from './config/db.js'; 
 
 dotenv.config(); // Load environment variables from .env file FIRST!
-const PORT = process.env.PORT || 3000; // Now gets 5000 from .env
+const PORT = process.env.PORT || 5000;
 
 const app = express();
-// Middleware setup
+// Application Middleware setup
 app.use(express.json()); // Parse JSON bodies
 app.use(cors()); // Allows frontend (React on port 3000) to talk to backend (Express on port 5000)
-app.use(morgan('dev')); // HTTP Request Logger
 app.use(helmet()); // Security middleware
+app.use(morgan('dev')); // HTTP Request Logger
+// Routes Middleware setup
+app.use('/api/products', productRoutes); 
 
-app.use('/api/products', productRoutes); // Use product routes
+async function initDB() {
+  try {
+    await sql`
+      CREATE TABLE IF NOT EXISTS products (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        image VARCHAR(255) NOT NULL,
+        price DECIMAL(10, 2) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log("Database initialized successfully");
+  } catch (error) {
+    console.log("Error initDB", error);
+  }
+}
 
-app.listen(PORT, () => {
-  console.log('Server is running on PORT ' + PORT);
+initDB().then(() => {
+  app.listen(PORT, () => {
+    console.log("Server is running on port " + PORT);
+  });
 });
