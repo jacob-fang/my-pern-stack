@@ -8,7 +8,7 @@ import productRoutes from './routes/productRoutes.js';
 import { sql } from './config/db.js'; 
 
 dotenv.config(); // Load environment variables from .env file FIRST!
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 const app = express();
 // Application Middleware setup
