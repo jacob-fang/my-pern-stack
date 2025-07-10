@@ -1,9 +1,18 @@
-import express from 'express';
-import { getAllProducts, createProduct } from '../controllers/productionControllers.js';
+import express from "express";
+import {
+  createProduct,
+  deleteProduct,
+  getProduct,
+  getProducts,
+  updateProduct,
+} from "../controllers/productController.js";
 
 const router = express.Router();
 
-router.get('/', getAllProducts); // GET all products
-router.post('/', createProduct); // POST a new product 
+router.get("/", getProducts);
+router.post("/", createProduct);
+router.get("/:id", getProduct);
+router.put("/:id", updateProduct);
+router.delete("/:id", deleteProduct);
 
-export default router; // Export the router to use in server.js
+export default router;
